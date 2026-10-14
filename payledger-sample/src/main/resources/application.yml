@@ -1,0 +1,5 @@
+payledger:
+  default-currency: CNY
+  webhook:
+    channels:
+      wechat: demo-secret

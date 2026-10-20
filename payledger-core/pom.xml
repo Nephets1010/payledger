@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2026 The payledger Authors. Licensed under the Apache License, Version 2.0 (the "License"); see the
+  LICENSE file in the project root for the full license text.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.nephets</groupId>
+    <artifactId>payledger</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>payledger-core</artifactId>
+  <name>payledger-core</name>
+  <description>纯 Java（零 Spring）核心：租户上下文（ThreadLocal）、租户解析、租户注册表与隔离异常。仅依赖 JDK 21。</description>
+
+  <!--
+    ★ 本模块严禁引入任何 org.springframework.* 依赖。
+      CI 的 architecture-boundaries job 用 grep 扫描编译期源码，出现 org.springframework.* 即失败。
+  -->
+  <dependencies>
+    <!-- 领域契约：值对象、枚举、异常与纯逻辑校验器（被 core 直接复用，全限定类名不变）。 -->
+    <dependency>
+      <groupId>io.github.nephets</groupId>
+      <artifactId>payledger-contract</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- 存储 SPI 与内存实现：余额/分录/幂等去重。 -->
+    <dependency>
+      <groupId>io.github.nephets</groupId>
+      <artifactId>payledger-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- SLF4J 门面：记账/结算路径的观测日志（版本由 Spring Boot BOM 统一管理）。 -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <properties>
+    <jacoco.line.minimum>${jacoco.line.minimum.core}</jacoco.line.minimum>
+    <jacoco.report.skip>false</jacoco.report.skip>
+  </properties>
+</project>
